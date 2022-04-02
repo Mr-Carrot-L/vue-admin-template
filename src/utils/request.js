@@ -28,6 +28,8 @@ service.interceptors.request.use(config => {
     } else {
       setTimeStamp()
     }
+
+    config.headers['Authorization'] = `Bearer ${store.getters.token}`
   }
 
   return config
@@ -45,7 +47,7 @@ service.interceptors.response.use(response => {
     return Promise.reject(new Error(message))
   }
 }, error => {
-  if (error.response && error.respone.data && error.respone.data.code === 10002) {
+  if (error.response && error.response.data && error.response.data.code === 10002) {
     store.dispatch('user/logout')
     router.push('/login')
   } else {

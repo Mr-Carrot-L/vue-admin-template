@@ -1,8 +1,9 @@
 import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
-import { login } from '@/api/user'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
 
 const state = {
-  token: getToken() // 设置token为共享状态
+  token: getToken(), // 设置token为共享状态
+  userInfo: {}
 }
 
 const mutations = {
@@ -13,6 +14,12 @@ const mutations = {
   removeToken(state) {
     state.token = null
     removeToken()
+  },
+  setUserInfo(state, result) {
+    state.userInfo = result
+  },
+  removeUseInfo(state) {
+    state.userInfo = {}
   }
 }
 
@@ -23,6 +30,18 @@ const actions = {
     context.commit('setToken', result)
 
     setTimeStamp()
+  },
+  async getUserInfo(context, data) {
+    const result = await getUserInfo()
+    const baseInfo = await getUserDetailById(result.userId)
+
+    context.commit('setUserInfo', { ...result, ...baseInfo })
+
+    return result
+  },
+  logout(context) {
+    context.commit('removeToken')
+    context.commit('removeUseInfo')
   }
 }
 

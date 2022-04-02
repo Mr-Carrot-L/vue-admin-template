@@ -115,3 +115,44 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+/**
+ * @function 检查数据类型
+ * @param {*} data
+ */
+export function typeOfPro(data) {
+  const toString = Object.prototype.toString
+  const dataType = data instanceof Element
+    ? 'element'
+    : toString.call(data).replace(/\[object\s(.+)\]/, '$1').toLowerCase()
+
+  return dataType
+}
+
+/**
+ * @function 将列表行数据转化为树形数据
+ * @param {Array} list 列表数据
+ * @param {String} rootId 根id
+ */
+export function tranListToTreeData(list, rootId) {
+  const map = {}
+  const tree = []
+  let node, i
+
+  for (i = 0; i < list.length; i += 1) {
+    map[list[i].id] = list[i]
+    list[i].children = []
+  }
+
+  for (i = 0; i < list.length; i += 1) {
+    node = list[i]
+
+    if (node.pid !== rootId) {
+      map[node.pid] && map[node.pid].children.push(node)
+    } else {
+      tree.push(node)
+    }
+  }
+
+  return tree
+}
